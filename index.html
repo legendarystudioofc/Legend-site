@@ -446,17 +446,17 @@
                 </div>
             </div>
 
-            <!-- Jogo 2: Poppy Playtime 3 -->
-            <div class="card-jogo" onclick="abrirJogo('poppy3')">
+            <!-- Jogo 2: Escape From Playtime -->
+            <div class="card-jogo" onclick="abrirJogo('escape')">
                 <div class="card-imagem-container">
-                    <img src="jogo2.jpg" alt="Poppy Playtime 3">
+                    <img src="EscapeLogo.jpeg" alt="Escape From Playtime">
                     <div class="card-badges">
-                        <span class="badge-versao">V 0.7.7</span>
+                        <span class="badge-versao">V 0.0.1</span>
                         <span class="badge-genero">TERROR</span>
                     </div>
                 </div>
                 <div class="card-info">
-                    <h3>POPPY PLAYTIME CHAPTER 3 MOBILE</h3>
+                    <h3>ESCAPE FROM PLAYTIME MOBILE</h3>
                     <p>LEGENDARY STUDIO</p>
                 </div>
             </div>
@@ -478,6 +478,12 @@
         <p id="detalhe-descricao" class="detalhe-sub">Descrição breve do port.</p>
 
         <a id="detalhe-link-download" href="#" class="btn-baixar">BAIXAR V 0.0.1</a>
+
+        <!-- Sobre o Port -->
+        <div class="secao-bloco">
+            <h4>SOBRE O PORT</h4>
+            <p id="detalhe-sobre" style="white-space: pre-line;">Texto descritivo do jogo...</p>
+        </div>
 
         <!-- Informações Técnicas -->
         <div class="secao-bloco">
@@ -561,7 +567,7 @@
         </div>
     </footer>
 
-    <!-- Script de Gestão de Comentários, Avatares em Imagem e Apelido -->
+    <!-- Script de Gestão de Comentários, Jogos e Informações -->
     <script>
         const dadosJogos = {
             'poppy5': {
@@ -569,20 +575,28 @@
                 versao: 'V 0.0.1',
                 imagem: 'Poppy5.jpeg',
                 descricao: 'Coisas quebradas. Explore os novos andares esquecidos da fábrica de brinquedos no mais recente port mobile.',
+                sobre: 'No capítulo mais recente de Poppy Playtime, você desce ainda mais fundo nas profundezas distorcidas da Playtime Co., sendo caçado por Huggy Wuggy e manipulado pelo sinistro mestre de marionetes conhecido como The Prototype. Sozinho e sem aliados, você precisa sobreviver aos perigos que espreitam nas sombras.',
                 linkDownload: '#',
                 comentarios: [
                     { autor: 'Carlos Gamer', avatar: 'avatar1.jpg', texto: 'Incrível! O jogo roda super fluido no meu telemóvel.' },
                     { autor: 'TerrorChannel', avatar: 'avatar2.jpg', texto: 'Melhor port do capítulo 5 até agora.' }
                 ]
             },
-            'poppy3': {
-                titulo: 'POPPY PLAYTIME CHAPTER 3 MOBILE',
-                versao: 'V 0.7.7',
-                imagem: 'jogo2.jpg',
-                descricao: 'Explore o orfanato Playcare abaixo da fábrica de brinquedos com CatNap à sua espreita.',
+            'escape': {
+                titulo: 'ESCAPE FROM PLAYTIME MOBILE',
+                versao: 'V 0.0.1',
+                imagem: 'BannerEscape.jpg',
+                descricao: 'A Smiling Critters Adventure set in the Poppy Playtime universe.',
+                sobre: `ESCAPE FROM PLAYTIME: A Smiling Critters Adventure is a co-op survival horror experience set in the Poppy Playtime universe.
+
+Explore the dark depths of an abandoned toy factory and fight to stay alive against the creatures that lurk in the shadows.
+
+Each run places you into a unique section of the facility: classrooms, warehouses, testing labs, and the dark corridors connecting them all. The denizens of the factory - fellow rejected Playtime Co. creations - stalk the decaying halls, hunting for prey.
+
+You and your friends must work together and utilize your surroundings if you hope to make it out of the factory in one piece.`,
                 linkDownload: '#',
                 comentarios: [
-                    { autor: 'Ana Souza', avatar: 'avatar3.jpg', texto: 'Adorei a otimização desta versão 0.7.7!' }
+                    { autor: 'LGS Fan', avatar: 'avatar3.jpg', texto: 'Ansioso para jogar este modo co-op no celular!' }
                 ]
             }
         };
@@ -604,6 +618,7 @@
             document.getElementById('detalhe-titulo').innerText = jogo.titulo;
             document.getElementById('detalhe-badge-ver').innerText = jogo.versao;
             document.getElementById('detalhe-descricao').innerText = jogo.descricao;
+            document.getElementById('detalhe-sobre').innerText = jogo.sobre;
             document.getElementById('detalhe-link-download').innerText = 'BAIXAR ' + jogo.versao;
             document.getElementById('detalhe-link-download').href = jogo.linkDownload;
 
@@ -636,7 +651,6 @@
                 return;
             }
 
-            // Adiciona na lista do jogo atual
             dadosJogos[jogoAtualID].comentarios.unshift({
                 autor: apelido,
                 avatar: avatarSelecionado,
