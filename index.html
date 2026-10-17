@@ -1,60 +1,283 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Legendary Studio — Jogos Android</title>
-  <style>
-    * { box-sizing: border-box }
-    body {
-      margin: 0; background: #0b0b12; color: #f7f4ff;
-      font: 16px/1.5 system-ui, sans-serif;
-    }
-    header, main, footer { width: min(960px, 90%); margin: auto }
-    header { padding: 34px 0 50px }
-    .brand { color: #a98bff; font-size: 14px; font-weight: 700; letter-spacing: .18em }
-    h1 { margin: 8px 0; font-size: clamp(36px, 8vw, 64px); line-height: 1 }
-    .intro { color: #b8b4c7; max-width: 560px }
-    h2 { font-size: 22px }
-    .card {
-      max-width: 420px; padding: 22px; border: 1px solid #292638;
-      border-radius: 20px; background: #14131d;
-    }
-    .cover {
-      display: grid; place-items: center; height: 190px; border-radius: 14px;
-      background: radial-gradient(circle at 50% 35%, #7652d8, #211b38 65%, #15131d);
-      font-size: 52px;
-    }
-    .tag { color: #bcaaff; font-size: 13px; font-weight: 700 }
-    .card h3 { margin: 8px 0 4px; font-size: 23px }
-    .card p, footer { color: #aaa6b8 }
-    button {
-      width: 100%; padding: 13px; border: 0; border-radius: 10px;
-      background: #514078; color: #ddd5f5; font: inherit; font-weight: 700;
-    }
-    button:disabled { cursor: not-allowed; opacity: .75 }
-    footer { padding: 40px 0 24px; font-size: 13px }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unreal Play Studio</title>
+    <!-- Ícone da aba do navegador (Favicon) usando a mesma foto do logo -->
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            padding: 16px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0 20px 0;
+            border-bottom: 1px solid #1f293d;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-area img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+            border: 1px solid #3b82f6;
+        }
+        .logo-text {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .logo-text span {
+            color: #3b82f6;
+        }
+        .menu-icon {
+            font-size: 26px;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        .titulo-secao {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #a855f7;
+            margin: 35px 0 20px 0;
+            letter-spacing: 2px;
+        }
+        .grid-jogos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 40px;
+        }
+        .card-jogo {
+            background-color: #131825;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1f293d;
+            padding-bottom: 12px;
+        }
+        .card-jogo img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+        .card-info {
+            padding: 10px;
+        }
+        .card-info h3 {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .card-info p {
+            font-size: 11px;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        footer {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #1f293d;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .footer-about .logo-area {
+            margin-bottom: 12px;
+        }
+        .footer-about p {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+        .footer-links h4, .footer-newsletter h4 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .footer-links ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .footer-links ul li a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .footer-newsletter p {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+        .newsletter-box {
+            display: flex;
+            gap: 10px;
+        }
+        .newsletter-box input {
+            flex: 1;
+            padding: 12px;
+            background-color: #131825;
+            border: 1px solid #1f293d;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+        .newsletter-box button {
+            padding: 12px 22px;
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .social-btn {
+            background-color: #131825;
+            border: 1px solid #1f293d;
+            color: white;
+            padding: 12px;
+            border-radius: 22px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .social-btn.full {
+            grid-column: span 2;
+        }
+        .footer-copy {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .footer-copy p:first-child {
+            color: #9ca3af;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        .footer-copy a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="brand">LEGENDARY STUDIO</div>
-    <h1>Jogos para<br>levar com você.</h1>
-    <p class="intro">Conheça nossos jogos para Android. Baixe e jogue onde quiser.</p>
-  </header>
 
-  <main>
-    <h2>Jogos</h2>
-    <article class="card">
-      <div class="cover" aria-label="Arte provisória do jogo">🎮</div>
-      <p class="tag">ANDROID · EM BREVE</p>
-      <h3>Meu primeiro jogo</h3>
-      <p>Estamos preparando este jogo. O download estará disponível aqui em breve.</p>
-      <button disabled>APK ainda não disponível</button>
-    </article>
-  </main>
+    <!-- Cabeçalho -->
+    <header>
+        <div class="logo-area">
+            <img src="logo.jpg" alt="Logo Unreal Play Studio">
+            <div class="logo-text">UNREAL PLAY <span>STUDIO</span></div>
+        </div>
+        <div class="menu-icon">☰</div>
+    </header>
 
-  <footer>© 2025 Legendary Studio</footer>
+    <!-- Secção Biblioteca -->
+    <h1 class="titulo-secao">BIBLIOTECA</h1>
+
+    <div class="grid-jogos">
+        <!-- Jogo 1 -->
+        <div class="card-jogo">
+            <img src="jogo1.jpg" alt="Poppy Playtime 5">
+            <div class="card-info">
+                <h3>POPPY PLAYTIME CHAPTER 5 MOBILE</h3>
+                <p>UNREAL PLAY STUDIO</p>
+            </div>
+        </div>
+        <!-- Jogo 2 -->
+        <div class="card-jogo">
+            <img src="jogo2.jpg" alt="Poppy Playtime 3">
+            <div class="card-info">
+                <h3>POPPY PLAYTIME CHAPTER 3 MOBILE</h3>
+                <p>UNREAL PLAY STUDIO</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé Completo com as posições idênticas às imagens -->
+    <footer>
+        <div class="footer-about">
+            <div class="logo-area">
+                <img src="logo.jpg" alt="Logo Unreal Play Studio">
+                <div class="logo-text">UNREAL PLAY <span>STUDIO</span></div>
+            </div>
+            <p>Criamos jogos móveis imersivos e portes de fãs de alta fidelidade. Quer se trate dos nossos próprios títulos de terror ou de levar os sucessos do PC para o Android, entregamos a experiência de console diretamente no seu bolso.</p>
+        </div>
+
+        <div class="footer-links">
+            <h4>EXPLORAR</h4>
+            <ul>
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Biblioteca</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-links">
+            <h4>LEGAL</h4>
+            <ul>
+                <li><a href="#">Política de Uso Justo</a></li>
+                <li><a href="#">Política de Privacidade</a></li>
+                <li><a href="#">DMCA</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-newsletter">
+            <h4>SEJA NOTIFICADO</h4>
+            <p>Inscreva-se para saber quando o próximo port for lançado.</p>
+            <div class="newsletter-box">
+                <input type="email" placeholder="Email">
+                <button>ENTRAR</button>
+            </div>
+        </div>
+
+        <div class="social-buttons">
+            <a href="#" class="social-btn">TELEGRAM</a>
+            <a href="#" class="social-btn">YOUTUBE</a>
+            <a href="#" class="social-btn">PLAY STORE</a>
+            <a href="#" class="social-btn">DONATE</a>
+            <a href="#" class="social-btn full">TIKTOK</a>
+        </div>
+
+        <div class="footer-copy">
+            <p>PARA COOPERAÇÃO</p>
+            <a href="mailto:legendarystudio.lgs@gmail.com">legendarystudio.lgs@gmail.com</a>
+            <p>© 2026 Unreal Play Studio. All rights reserved.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
