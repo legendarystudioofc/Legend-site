@@ -610,7 +610,7 @@
         </div>
     </footer>
 
-    <!-- Script de Gestão de Comentários, Likes e Interações -->
+    <!-- Script de Gestão de Comentários, Likes (com localStorage) e Interações -->
     <script>
         const dadosJogos = {
             'poppy5': {
@@ -620,8 +620,6 @@
                 descricao: 'Coisas quebradas. Explore os novos andares esquecidos da fábrica de brinquedos no mais recente port mobile.',
                 sobre: 'No capítulo mais recente de Poppy Playtime, você desce ainda mais fundo nas profundezas distorcidas da Playtime Co., sendo caçado por Huggy Wuggy e manipulado pelo sinistro mestre de marionetes conhecido como The Prototype. Sozinho e sem aliados, você precisa sobreviver aos perigos que espreitam nas sombras.',
                 badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-versao">V 0.0.1</span>',
-                likes: 0,
-                dislikes: 0,
                 linkDownload: '#'
             },
             'escape': {
@@ -637,20 +635,29 @@ Each run places you into a unique section of the facility: classrooms, warehouse
 
 You and your friends must work together and utilize your surroundings if you hope to make it out of the factory in one piece.`,
                 badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-coop">CO-OP</span><span class="badge-versao">V 0.0.1</span>',
-                likes: 0,
-                dislikes: 0,
                 linkDownload: '#'
             }
         };
 
         let jogoAtualID = null;
         let avatarSelecionado = 'avatar1.jpg';
-        let statusLike = null;
 
         function selecionarAvatar(elemento, caminhoImg) {
             document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
             elemento.classList.add('selecionado');
             avatarSelecionado = caminhoImg;
+        }
+
+        function obterDadosJogoSalvos() {
+            const salvos = localStorage.getItem('estatisticas_' + jogoAtualID);
+            if (salvos) {
+                return JSON.parse(salvos);
+            }
+            return { likes: 0, dislikes: 0, statusLike: null };
+        }
+
+        function salvarDadosJogo(stats) {
+            localStorage.setItem('estatisticas_' + jogoAtualID, JSON.stringify(stats));
         }
 
         function abrirJogo(id) {
@@ -665,12 +672,17 @@ You and your friends must work together and utilize your surroundings if you hop
             document.getElementById('detalhe-link-download').innerText = 'BAIXAR ' + jogo.versao;
             document.getElementById('detalhe-link-download').href = jogo.linkDownload;
 
-            document.getElementById('count-likes').innerText = jogo.likes;
-            document.getElementById('count-dislikes').innerText = jogo.dislikes;
+            const stats = obterDadosJogoSalvos();
+            document.getElementById('count-likes').innerText = stats.likes;
+            document.getElementById('count-dislikes').innerText = stats.dislikes;
             
-            statusLike = null;
-            document.getElementById('btn-like').classList.remove('liked');
-            document.getElementById('btn-dislike').classList.remove('disliked');
+            const btnLike = document.getElementById('btn-like');
+            const btnDislike = document.getElementById('btn-dislike');
+            btnLike.classList.remove('liked');
+            btnDislike.classList.remove('disliked');
+
+            if (stats.statusLike === 'like') btnLike.classList.add('liked');
+            if (stats.statusLike === 'dislike') btnDislike.classList.add('disliked');
 
             atualizarListaComentarios();
 
@@ -686,47 +698,51 @@ You and your friends must work together and utilize your surroundings if you hop
         }
 
         function darLike() {
-            const jogo = dadosJogos[jogoAtualID];
+            const stats = obterDadosJogoSalvos();
             const btnLike = document.getElementById('btn-like');
             const btnDislike = document.getElementById('btn-dislike');
 
-            if (statusLike === 'like') {
-                jogo.likes--;
-                statusLike = null;
+            if (stats.statusLike === 'like') {
+                stats.likes--;
+                stats.statusLike = null;
                 btnLike.classList.remove('liked');
             } else {
-                if (statusLike === 'dislike') {
-                    jogo.dislikes--;
+                if (stats.statusLike === 'dislike') {
+                    stats.dislikes--;
                     btnDislike.classList.remove('disliked');
                 }
-                jogo.likes++;
-                statusLike = 'like';
+                stats.likes++;
+                stats.statusLike = 'like';
                 btnLike.classList.add('liked');
             }
-            document.getElementById('count-likes').innerText = jogo.likes;
-            document.getElementById('count-dislikes').innerText = jogo.dislikes;
+
+            salvarDadosJogo(stats);
+            document.getElementById('count-likes').innerText = stats.likes;
+            document.getElementById('count-dislikes').innerText = stats.dislikes;
         }
 
         function darDislike() {
-            const jogo = dadosJogos[jogoAtualID];
+            const stats = obterDadosJogoSalvos();
             const btnLike = document.getElementById('btn-like');
             const btnDislike = document.getElementById('btn-dislike');
 
-            if (statusLike === 'dislike') {
-                jogo.dislikes--;
-                statusLike = null;
+            if (stats.statusLike === 'dislike') {
+                stats.dislikes--;
+                stats.statusLike = null;
                 btnDislike.classList.remove('disliked');
             } else {
-                if (statusLike === 'like') {
-                    jogo.likes--;
+                if (stats.statusLike === 'like') {
+                    stats.likes--;
                     btnLike.classList.remove('liked');
                 }
-                jogo.dislikes++;
-                statusLike = 'dislike';
+                stats.dislikes++;
+                stats.statusLike = 'dislike';
                 btnDislike.classList.add('disliked');
             }
-            document.getElementById('count-likes').innerText = jogo.likes;
-            document.getElementById('count-dislikes').innerText = jogo.dislikes;
+
+            salvarDadosJogo(stats);
+            document.getElementById('count-likes').innerText = stats.likes;
+            document.getElementById('count-dislikes').innerText = stats.dislikes;
         }
 
         function compartilharJogo() {
