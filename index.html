@@ -181,8 +181,40 @@
         .detalhe-sub {
             color: #9ca3af;
             font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        /* Barra de Ações (Like, Dislike, Share) */
+        .action-bar {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
         }
+        .action-btn {
+            background-color: #131825;
+            border: 1px solid #1f293d;
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .action-btn.liked {
+            background-color: #064e3b;
+            border-color: #059669;
+            color: #34d399;
+        }
+        .action-btn.disliked {
+            background-color: #7f1d1d;
+            border-color: #dc2626;
+            color: #f87171;
+        }
+
         .btn-baixar {
             display: block;
             width: 100%;
@@ -454,7 +486,7 @@
                 </div>
             </div>
 
-            <!-- Jogo 2: Escape From Playtime (Com tag co-op) -->
+            <!-- Jogo 2: Escape From Playtime -->
             <div class="card-jogo" onclick="abrirJogo('escape')">
                 <div class="card-imagem-container">
                     <img src="EscapeLogo.jpeg" alt="Escape From Playtime">
@@ -478,19 +510,24 @@
 
         <img id="detalhe-img" class="detalhe-banner" src="" alt="Capa do Jogo">
         
-        <div class="detalhe-badges" id="detalhe-badges-container">
-            <!-- As tags são injetadas dinamicamente via script para cada jogo -->
-        </div>
+        <div class="detalhe-badges" id="detalhe-badges-container"></div>
 
         <h2 id="detalhe-titulo" class="detalhe-titulo">TÍTULO DO JOGO</h2>
         <p id="detalhe-descricao" class="detalhe-sub">Descrição breve do port.</p>
+
+        <!-- Barra de Ações (Like, Dislike, Compartilhar) -->
+        <div class="action-bar">
+            <button id="btn-like" class="action-btn" onclick="darLike()">👍 <span id="count-likes">0</span></button>
+            <button id="btn-dislike" class="action-btn" onclick="darDislike()">👎 <span id="count-dislikes">0</span></button>
+            <button class="action-btn" onclick="compartilharJogo()">🔗 Compartilhar</button>
+        </div>
 
         <a id="detalhe-link-download" href="#" class="btn-baixar">BAIXAR V 0.0.1</a>
 
         <!-- Sobre o Port -->
         <div class="secao-bloco">
             <h4>SOBRE O PORT</h4>
-            <p id="detalhe-sobre" style="white-space: pre-line;">Texto descritivo do jogo...</p>
+            <p id="detalhe-sobre" style="white-space: pre-line;"></p>
         </div>
 
         <!-- Informações Técnicas -->
@@ -504,7 +541,7 @@
             </div>
         </div>
 
-        <!-- Comentários Independentes com Seleção de Avatares do GitHub -->
+        <!-- Comentários com Persistência Local -->
         <div class="secao-bloco comentarios-box">
             <h4>COMENTÁRIOS DA COMUNIDADE</h4>
             
@@ -521,9 +558,7 @@
             <textarea id="input-comentario" class="comentario-input" placeholder="Deixe um comentário..." maxlength="500"></textarea>
             <button class="btn-comentar" onclick="adicionarComentario()">PUBLICAR COMENTÁRIO</button>
             
-            <div id="lista-comentarios" class="lista-comentarios">
-                <!-- Os comentários carregam dinamicamente dependendo do jogo -->
-            </div>
+            <div id="lista-comentarios" class="lista-comentarios"></div>
         </div>
     </div>
 
@@ -575,7 +610,7 @@
         </div>
     </footer>
 
-    <!-- Script de Gestão de Comentários, Jogos e Informações -->
+    <!-- Script de Gestão de Comentários, Likes e Interações -->
     <script>
         const dadosJogos = {
             'poppy5': {
@@ -585,11 +620,9 @@
                 descricao: 'Coisas quebradas. Explore os novos andares esquecidos da fábrica de brinquedos no mais recente port mobile.',
                 sobre: 'No capítulo mais recente de Poppy Playtime, você desce ainda mais fundo nas profundezas distorcidas da Playtime Co., sendo caçado por Huggy Wuggy e manipulado pelo sinistro mestre de marionetes conhecido como The Prototype. Sozinho e sem aliados, você precisa sobreviver aos perigos que espreitam nas sombras.',
                 badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-versao">V 0.0.1</span>',
-                linkDownload: '#',
-                comentarios: [
-                    { autor: 'Carlos Gamer', avatar: 'avatar1.jpg', texto: 'Incrível! O jogo roda super fluido no meu telemóvel.' },
-                    { autor: 'TerrorChannel', avatar: 'avatar2.jpg', texto: 'Melhor port do capítulo 5 até agora.' }
-                ]
+                likes: 0,
+                dislikes: 0,
+                linkDownload: '#'
             },
             'escape': {
                 titulo: 'ESCAPE FROM PLAYTIME MOBILE',
@@ -604,15 +637,15 @@ Each run places you into a unique section of the facility: classrooms, warehouse
 
 You and your friends must work together and utilize your surroundings if you hope to make it out of the factory in one piece.`,
                 badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-coop">CO-OP</span><span class="badge-versao">V 0.0.1</span>',
-                linkDownload: '#',
-                comentarios: [
-                    { autor: 'LGS Fan', avatar: 'avatar3.jpg', texto: 'Ansioso para jogar este modo co-op no celular!' }
-                ]
+                likes: 0,
+                dislikes: 0,
+                linkDownload: '#'
             }
         };
 
         let jogoAtualID = null;
         let avatarSelecionado = 'avatar1.jpg';
+        let statusLike = null;
 
         function selecionarAvatar(elemento, caminhoImg) {
             document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
@@ -632,6 +665,13 @@ You and your friends must work together and utilize your surroundings if you hop
             document.getElementById('detalhe-link-download').innerText = 'BAIXAR ' + jogo.versao;
             document.getElementById('detalhe-link-download').href = jogo.linkDownload;
 
+            document.getElementById('count-likes').innerText = jogo.likes;
+            document.getElementById('count-dislikes').innerText = jogo.dislikes;
+            
+            statusLike = null;
+            document.getElementById('btn-like').classList.remove('liked');
+            document.getElementById('btn-dislike').classList.remove('disliked');
+
             atualizarListaComentarios();
 
             document.getElementById('home-view').classList.remove('active');
@@ -643,6 +683,74 @@ You and your friends must work together and utilize your surroundings if you hop
             document.getElementById('detalhe-view').classList.remove('active');
             document.getElementById('home-view').classList.add('active');
             window.scrollTo(0, 0);
+        }
+
+        function darLike() {
+            const jogo = dadosJogos[jogoAtualID];
+            const btnLike = document.getElementById('btn-like');
+            const btnDislike = document.getElementById('btn-dislike');
+
+            if (statusLike === 'like') {
+                jogo.likes--;
+                statusLike = null;
+                btnLike.classList.remove('liked');
+            } else {
+                if (statusLike === 'dislike') {
+                    jogo.dislikes--;
+                    btnDislike.classList.remove('disliked');
+                }
+                jogo.likes++;
+                statusLike = 'like';
+                btnLike.classList.add('liked');
+            }
+            document.getElementById('count-likes').innerText = jogo.likes;
+            document.getElementById('count-dislikes').innerText = jogo.dislikes;
+        }
+
+        function darDislike() {
+            const jogo = dadosJogos[jogoAtualID];
+            const btnLike = document.getElementById('btn-like');
+            const btnDislike = document.getElementById('btn-dislike');
+
+            if (statusLike === 'dislike') {
+                jogo.dislikes--;
+                statusLike = null;
+                btnDislike.classList.remove('disliked');
+            } else {
+                if (statusLike === 'like') {
+                    jogo.likes--;
+                    btnLike.classList.remove('liked');
+                }
+                jogo.dislikes++;
+                statusLike = 'dislike';
+                btnDislike.classList.add('disliked');
+            }
+            document.getElementById('count-likes').innerText = jogo.likes;
+            document.getElementById('count-dislikes').innerText = jogo.dislikes;
+        }
+
+        function compartilharJogo() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.getElementById('detalhe-titulo').innerText,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copiado para a área de transferência!');
+            }
+        }
+
+        function obterComentariosSalvos() {
+            const salvos = localStorage.getItem('comentarios_' + jogoAtualID);
+            if (salvos) {
+                return JSON.parse(salvos);
+            }
+            return [];
+        }
+
+        function salvarComentarios(comentarios) {
+            localStorage.setItem('comentarios_' + jogoAtualID, JSON.stringify(comentarios));
         }
 
         function adicionarComentario() {
@@ -661,19 +769,21 @@ You and your friends must work together and utilize your surroundings if you hop
                 return;
             }
 
-            dadosJogos[jogoAtualID].comentarios.unshift({
+            const comentarios = obterComentariosSalvos();
+            comentarios.unshift({
                 autor: apelido,
                 avatar: avatarSelecionado,
                 texto: texto
             });
 
+            salvarComentarios(comentarios);
             inputTexto.value = '';
             atualizarListaComentarios();
         }
 
         function atualizarListaComentarios() {
             const listaDiv = document.getElementById('lista-comentarios');
-            const comentarios = dadosJogos[jogoAtualID].comentarios;
+            const comentarios = obterComentariosSalvos();
 
             if (comentarios.length === 0) {
                 listaDiv.innerHTML = '<p style="color: #6b7280; font-size: 12px; text-align: center; padding: 10px;">No comments yet. Be the first to share your thoughts!</p>';
