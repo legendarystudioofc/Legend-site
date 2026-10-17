@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legendary Studio</title>
-    <!-- Logozinha / Favicon para aparecer na aba do navegador e favoritos -->
+    <!-- Logozinha / Favicon -->
     <link rel="icon" type="image/jpeg" href="logo.jpg">
-    <link rel="shortcut icon" type="image/jpeg" href="logo.jpg">
     <link rel="apple-touch-icon" href="logo.jpg">
     <style>
         * {
@@ -31,6 +30,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
         .logo-area img {
             width: 44px;
@@ -53,6 +53,16 @@
             cursor: pointer;
             color: #ffffff;
         }
+        
+        /* Views */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* Home View */
         .titulo-secao {
             text-align: center;
             font-size: 24px;
@@ -75,6 +85,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            cursor: pointer;
         }
         .card-imagem-container {
             position: relative;
@@ -103,7 +114,6 @@
             font-weight: bold;
             padding: 4px 8px;
             border-radius: 6px;
-            letter-spacing: 0.5px;
         }
         .badge-genero {
             background-color: #2563eb;
@@ -112,7 +122,6 @@
             font-weight: bold;
             padding: 4px 8px;
             border-radius: 6px;
-            letter-spacing: 0.5px;
         }
         .card-info {
             padding: 12px;
@@ -128,21 +137,207 @@
             color: #ec4899;
             font-weight: 600;
         }
+
+        /* Detalhes do Jogo View */
+        .btn-voltar {
+            color: #ffffff;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .detalhe-banner {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #1f293d;
+        }
+        .detalhe-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .detalhe-titulo {
+            font-size: 22px;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+        .detalhe-sub {
+            color: #9ca3af;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .btn-baixar {
+            display: block;
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+        .secao-bloco {
+            background-color: #131825;
+            border: 1px solid #1f293d;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        .secao-bloco h4 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #ec4899;
+            letter-spacing: 1px;
+        }
+        .secao-bloco p {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+        .tech-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .tech-item {
+            font-size: 13px;
+            color: #d1d5db;
+        }
+        .tech-item span {
+            display: block;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Comentários Independentes com Imagens de Avatar */
+        .comentarios-box {
+            margin-top: 25px;
+        }
+        .avatar-label {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: bold;
+        }
+        .avatar-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .avatar-opcao {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #1f293d;
+            border: 2px solid transparent;
+            cursor: pointer;
+            object-fit: cover;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+        .avatar-opcao.selecionado {
+            border-color: #ec4899;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+            transform: scale(1.05);
+        }
+        .input-apelido {
+            width: 100%;
+            background-color: #0b0f19;
+            border: 1px solid #1f293d;
+            border-radius: 6px;
+            padding: 10px;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .comentario-input {
+            width: 100%;
+            background-color: #0b0f19;
+            border: 1px solid #1f293d;
+            border-radius: 6px;
+            padding: 10px;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 10px;
+            resize: none;
+            height: 70px;
+        }
+        .btn-comentar {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .lista-comentarios {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .comentario-item {
+            background-color: #0b0f19;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #1f293d;
+            font-size: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .comentario-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #ec4899;
+            flex-shrink: 0;
+        }
+        .comentario-conteudo strong {
+            color: #ec4899;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .comentario-conteudo p {
+            color: #d1d5db;
+            line-height: 1.4;
+        }
+
+        /* Rodapé */
         footer {
-            margin-top: 30px;
+            margin-top: 40px;
             padding-top: 25px;
             border-top: 1px solid #1f293d;
             display: flex;
             flex-direction: column;
             gap: 28px;
         }
-        .footer-about .logo-area {
-            margin-bottom: 12px;
-        }
         .footer-about p {
             font-size: 13px;
             color: #9ca3af;
             line-height: 1.6;
+            margin-top: 10px;
         }
         .footer-links h4, .footer-newsletter h4 {
             font-size: 14px;
@@ -161,11 +356,6 @@
             color: #9ca3af;
             text-decoration: none;
             font-size: 13px;
-        }
-        .footer-newsletter p {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 10px;
         }
         .newsletter-box {
             display: flex;
@@ -205,7 +395,6 @@
             text-decoration: none;
             font-size: 12px;
             font-weight: bold;
-            letter-spacing: 0.5px;
         }
         .social-btn.full {
             grid-column: span 2;
@@ -219,69 +408,115 @@
             flex-direction: column;
             gap: 6px;
         }
-        .footer-copy p:first-child {
-            color: #9ca3af;
-            font-size: 11px;
-            letter-spacing: 1px;
-        }
         .footer-copy a {
             color: #ec4899;
             text-decoration: none;
-            font-size: 13px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <!-- Cabeçalho -->
+    <!-- Cabeçalho Fixo -->
     <header>
-        <div class="logo-area">
+        <div class="logo-area" onclick="irParaHome()">
             <img src="logo.jpg" alt="Logo Legendary Studio">
             <div class="logo-text">LEGENDARY <span>STUDIO</span></div>
         </div>
         <div class="menu-icon">☰</div>
     </header>
 
-    <!-- Secção Biblioteca -->
-    <h1 class="titulo-secao">BIBLIOTECA</h1>
+    <!-- ECRÃ 1: BIBLIOTECA / HOME -->
+    <div id="home-view" class="view active">
+        <h1 class="titulo-secao">BIBLIOTECA</h1>
 
-    <div class="grid-jogos">
-        <!-- Jogo 1 (Poppy Playtime 5) -->
-        <div class="card-jogo">
-            <div class="card-imagem-container">
-                <img src="Poppy5.jpeg" alt="Poppy Playtime 5">
-                <div class="card-badges">
-                    <span class="badge-versao">V 0.0.1</span>
-                    <span class="badge-genero">TERROR</span>
+        <div class="grid-jogos">
+            <!-- Jogo 1: Poppy Playtime 5 -->
+            <div class="card-jogo" onclick="abrirJogo('poppy5')">
+                <div class="card-imagem-container">
+                    <img src="Poppy5.jpeg" alt="Poppy Playtime 5">
+                    <div class="card-badges">
+                        <span class="badge-versao">V 0.0.1</span>
+                        <span class="badge-genero">TERROR</span>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3>POPPY PLAYTIME CHAPTER 5 MOBILE</h3>
+                    <p>LEGENDARY STUDIO</p>
                 </div>
             </div>
-            <div class="card-info">
-                <h3>POPPY PLAYTIME CHAPTER 5 MOBILE</h3>
-                <p>LEGENDARY STUDIO</p>
-            </div>
-        </div>
 
-        <!-- Jogo 2 (Poppy Playtime 3) -->
-        <div class="card-jogo">
-            <div class="card-imagem-container">
-                <img src="jogo2.jpg" alt="Poppy Playtime 3">
-                <div class="card-badges">
-                    <span class="badge-versao">V 0.7.7</span>
-                    <span class="badge-genero">TERROR</span>
+            <!-- Jogo 2: Poppy Playtime 3 -->
+            <div class="card-jogo" onclick="abrirJogo('poppy3')">
+                <div class="card-imagem-container">
+                    <img src="jogo2.jpg" alt="Poppy Playtime 3">
+                    <div class="card-badges">
+                        <span class="badge-versao">V 0.7.7</span>
+                        <span class="badge-genero">TERROR</span>
+                    </div>
                 </div>
-            </div>
-            <div class="card-info">
-                <h3>POPPY PLAYTIME CHAPTER 3 MOBILE</h3>
-                <p>LEGENDARY STUDIO</p>
+                <div class="card-info">
+                    <h3>POPPY PLAYTIME CHAPTER 3 MOBILE</h3>
+                    <p>LEGENDARY STUDIO</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Rodapé Completo -->
+    <!-- ECRÃ 2: DETALHES DO JOGO -->
+    <div id="detalhe-view" class="view">
+        <button class="btn-voltar" onclick="irParaHome()">← VOLTAR PARA BIBLIOTECA</button>
+
+        <img id="detalhe-img" class="detalhe-banner" src="" alt="Capa do Jogo">
+        
+        <div class="detalhe-badges">
+            <span class="badge-genero">TERROR</span>
+            <span class="badge-versao" id="detalhe-badge-ver">V 0.0.1</span>
+        </div>
+
+        <h2 id="detalhe-titulo" class="detalhe-titulo">TÍTULO DO JOGO</h2>
+        <p id="detalhe-descricao" class="detalhe-sub">Descrição breve do port.</p>
+
+        <a id="detalhe-link-download" href="#" class="btn-baixar">BAIXAR V 0.0.1</a>
+
+        <!-- Informações Técnicas -->
+        <div class="secao-bloco">
+            <h4>INFORMAÇÕES TÉCNICAS</h4>
+            <div class="tech-list">
+                <div class="tech-item">⚙️ Processador Recomendado: <span>Qualcomm Snapdragon 855 ou equivalente</span></div>
+                <div class="tech-item">💾 Memória RAM: <span>4 GB RAM mínimo</span></div>
+                <div class="tech-item">📱 Versão do Android: <span>Android 8.0 ou superior</span></div>
+                <div class="tech-item">📂 Espaço Livre: <span>3 GB de armazenamento</span></div>
+            </div>
+        </div>
+
+        <!-- Comentários Independentes com Seleção de Avatares do GitHub -->
+        <div class="secao-bloco comentarios-box">
+            <h4>COMENTÁRIOS DA COMUNIDADE</h4>
+            
+            <span class="avatar-label">ESCOLHA UM AVATAR</span>
+            <div class="avatar-container">
+                <img src="avatar1.jpg" class="avatar-opcao selecionado" onclick="selecionarAvatar(this, 'avatar1.jpg')" alt="Avatar 1">
+                <img src="avatar2.jpg" class="avatar-opcao" onclick="selecionarAvatar(this, 'avatar2.jpg')" alt="Avatar 2">
+                <img src="avatar3.jpg" class="avatar-opcao" onclick="selecionarAvatar(this, 'avatar3.jpg')" alt="Avatar 3">
+                <img src="avatar4.jpg" class="avatar-opcao" onclick="selecionarAvatar(this, 'avatar4.jpg')" alt="Avatar 4">
+                <img src="avatar5.jpg" class="avatar-opcao" onclick="selecionarAvatar(this, 'avatar5.jpg')" alt="Avatar 5">
+            </div>
+
+            <input type="text" id="input-apelido" class="input-apelido" placeholder="Seu Apelido (ex: PlayerLGS)" maxlength="20">
+            <textarea id="input-comentario" class="comentario-input" placeholder="Deixe um comentário..." maxlength="500"></textarea>
+            <button class="btn-comentar" onclick="adicionarComentario()">PUBLICAR COMENTÁRIO</button>
+            
+            <div id="lista-comentarios" class="lista-comentarios">
+                <!-- Os comentários carregam dinamicamente dependendo do jogo -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé Comum -->
     <footer>
         <div class="footer-about">
-            <div class="logo-area">
+            <div class="logo-area" onclick="irParaHome()">
                 <img src="logo.jpg" alt="Logo Legendary Studio">
                 <div class="logo-text">LEGENDARY <span>STUDIO</span></div>
             </div>
@@ -291,8 +526,8 @@
         <div class="footer-links">
             <h4>EXPLORAR</h4>
             <ul>
-                <li><a href="#">Início</a></li>
-                <li><a href="#">Biblioteca</a></li>
+                <li><a href="#" onclick="irParaHome(); return false;">Início</a></li>
+                <li><a href="#" onclick="irParaHome(); return false;">Biblioteca</a></li>
             </ul>
         </div>
 
@@ -329,5 +564,115 @@
         </div>
     </footer>
 
+    <!-- Script de Gestão de Comentários, Avatares em Imagem e Apelido -->
+    <script>
+        const dadosJogos = {
+            'poppy5': {
+                titulo: 'POPPY PLAYTIME CHAPTER 5 MOBILE',
+                versao: 'V 0.0.1',
+                imagem: 'Poppy5.jpeg',
+                descricao: 'Coisas quebradas. Explore os novos andares esquecidos da fábrica de brinquedos no mais recente port mobile.',
+                linkDownload: '#',
+                comentarios: [
+                    { autor: 'Carlos Gamer', avatar: 'avatar1.jpg', texto: 'Incrível! O jogo roda super fluido no meu telemóvel.' },
+                    { autor: 'TerrorChannel', avatar: 'avatar2.jpg', texto: 'Melhor port do capítulo 5 até agora.' }
+                ]
+            },
+            'poppy3': {
+                titulo: 'POPPY PLAYTIME CHAPTER 3 MOBILE',
+                versao: 'V 0.7.7',
+                imagem: 'jogo2.jpg',
+                descricao: 'Explore o orfanato Playcare abaixo da fábrica de brinquedos com CatNap à sua espreita.',
+                linkDownload: '#',
+                comentarios: [
+                    { autor: 'Ana Souza', avatar: 'avatar3.jpg', texto: 'Adorei a otimização desta versão 0.7.7!' }
+                ]
+            }
+        };
+
+        let jogoAtualID = null;
+        let avatarSelecionado = 'avatar1.jpg';
+
+        function selecionarAvatar(elemento, caminhoImg) {
+            document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
+            elemento.classList.add('selecionado');
+            avatarSelecionado = caminhoImg;
+        }
+
+        function abrirJogo(id) {
+            jogoAtualID = id;
+            const jogo = dadosJogos[id];
+
+            document.getElementById('detalhe-img').src = jogo.imagem;
+            document.getElementById('detalhe-titulo').innerText = jogo.titulo;
+            document.getElementById('detalhe-badge-ver').innerText = jogo.versao;
+            document.getElementById('detalhe-descricao').innerText = jogo.descricao;
+            document.getElementById('detalhe-link-download').innerText = 'BAIXAR ' + jogo.versao;
+            document.getElementById('detalhe-link-download').href = jogo.linkDownload;
+
+            atualizarListaComentarios();
+
+            document.getElementById('home-view').classList.remove('active');
+            document.getElementById('detalhe-view').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function irParaHome() {
+            document.getElementById('detalhe-view').classList.remove('active');
+            document.getElementById('home-view').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function adicionarComentario() {
+            const inputApelido = document.getElementById('input-apelido');
+            const inputTexto = document.getElementById('input-comentario');
+            
+            let apelido = inputApelido.value.trim();
+            const texto = inputTexto.value.trim();
+
+            if (apelido === '') {
+                apelido = 'Anónimo';
+            }
+
+            if (texto === '') {
+                alert('Escreva um comentário antes de publicar.');
+                return;
+            }
+
+            // Adiciona na lista do jogo atual
+            dadosJogos[jogoAtualID].comentarios.unshift({
+                autor: apelido,
+                avatar: avatarSelecionado,
+                texto: texto
+            });
+
+            inputTexto.value = '';
+            atualizarListaComentarios();
+        }
+
+        function atualizarListaComentarios() {
+            const listaDiv = document.getElementById('lista-comentarios');
+            const comentarios = dadosJogos[jogoAtualID].comentarios;
+
+            if (comentarios.length === 0) {
+                listaDiv.innerHTML = '<p style="color: #6b7280; font-size: 12px; text-align: center; padding: 10px;">No comments yet. Be the first to share your thoughts!</p>';
+                return;
+            }
+
+            let html = '';
+            comentarios.forEach(c => {
+                html += `
+                    <div class="comentario-item">
+                        <img src="${c.avatar}" class="comentario-avatar" alt="Avatar">
+                        <div class="comentario-conteudo">
+                            <strong>${c.autor}</strong>
+                            <p>${c.texto}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            listaDiv.innerHTML = html;
+        }
+    </script>
 </body>
 </html>
