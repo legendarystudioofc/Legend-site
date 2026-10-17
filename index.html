@@ -123,6 +123,14 @@
             padding: 4px 8px;
             border-radius: 6px;
         }
+        .badge-coop {
+            background-color: #db2777;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
         .card-info {
             padding: 12px;
         }
@@ -446,13 +454,14 @@
                 </div>
             </div>
 
-            <!-- Jogo 2: Escape From Playtime -->
+            <!-- Jogo 2: Escape From Playtime (Com tag co-op) -->
             <div class="card-jogo" onclick="abrirJogo('escape')">
                 <div class="card-imagem-container">
                     <img src="EscapeLogo.jpeg" alt="Escape From Playtime">
                     <div class="card-badges">
                         <span class="badge-versao">V 0.0.1</span>
                         <span class="badge-genero">TERROR</span>
+                        <span class="badge-coop">CO-OP</span>
                     </div>
                 </div>
                 <div class="card-info">
@@ -469,9 +478,8 @@
 
         <img id="detalhe-img" class="detalhe-banner" src="" alt="Capa do Jogo">
         
-        <div class="detalhe-badges">
-            <span class="badge-genero">TERROR</span>
-            <span class="badge-versao" id="detalhe-badge-ver">V 0.0.1</span>
+        <div class="detalhe-badges" id="detalhe-badges-container">
+            <!-- As tags são injetadas dinamicamente via script para cada jogo -->
         </div>
 
         <h2 id="detalhe-titulo" class="detalhe-titulo">TÍTULO DO JOGO</h2>
@@ -576,6 +584,7 @@
                 imagem: 'Poppy5.jpeg',
                 descricao: 'Coisas quebradas. Explore os novos andares esquecidos da fábrica de brinquedos no mais recente port mobile.',
                 sobre: 'No capítulo mais recente de Poppy Playtime, você desce ainda mais fundo nas profundezas distorcidas da Playtime Co., sendo caçado por Huggy Wuggy e manipulado pelo sinistro mestre de marionetes conhecido como The Prototype. Sozinho e sem aliados, você precisa sobreviver aos perigos que espreitam nas sombras.',
+                badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-versao">V 0.0.1</span>',
                 linkDownload: '#',
                 comentarios: [
                     { autor: 'Carlos Gamer', avatar: 'avatar1.jpg', texto: 'Incrível! O jogo roda super fluido no meu telemóvel.' },
@@ -594,6 +603,7 @@ Explore the dark depths of an abandoned toy factory and fight to stay alive agai
 Each run places you into a unique section of the facility: classrooms, warehouses, testing labs, and the dark corridors connecting them all. The denizens of the factory - fellow rejected Playtime Co. creations - stalk the decaying halls, hunting for prey.
 
 You and your friends must work together and utilize your surroundings if you hope to make it out of the factory in one piece.`,
+                badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-coop">CO-OP</span><span class="badge-versao">V 0.0.1</span>',
                 linkDownload: '#',
                 comentarios: [
                     { autor: 'LGS Fan', avatar: 'avatar3.jpg', texto: 'Ansioso para jogar este modo co-op no celular!' }
@@ -616,7 +626,7 @@ You and your friends must work together and utilize your surroundings if you hop
 
             document.getElementById('detalhe-img').src = jogo.imagem;
             document.getElementById('detalhe-titulo').innerText = jogo.titulo;
-            document.getElementById('detalhe-badge-ver').innerText = jogo.versao;
+            document.getElementById('detalhe-badges-container').innerHTML = jogo.badgesHtml;
             document.getElementById('detalhe-descricao').innerText = jogo.descricao;
             document.getElementById('detalhe-sobre').innerText = jogo.sobre;
             document.getElementById('detalhe-link-download').innerText = 'BAIXAR ' + jogo.versao;
