@@ -1,0 +1,60 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legendary Studio — Jogos Android</title>
+  <style>
+    * { box-sizing: border-box }
+    body {
+      margin: 0; background: #0b0b12; color: #f7f4ff;
+      font: 16px/1.5 system-ui, sans-serif;
+    }
+    header, main, footer { width: min(960px, 90%); margin: auto }
+    header { padding: 34px 0 50px }
+    .brand { color: #a98bff; font-size: 14px; font-weight: 700; letter-spacing: .18em }
+    h1 { margin: 8px 0; font-size: clamp(36px, 8vw, 64px); line-height: 1 }
+    .intro { color: #b8b4c7; max-width: 560px }
+    h2 { font-size: 22px }
+    .card {
+      max-width: 420px; padding: 22px; border: 1px solid #292638;
+      border-radius: 20px; background: #14131d;
+    }
+    .cover {
+      display: grid; place-items: center; height: 190px; border-radius: 14px;
+      background: radial-gradient(circle at 50% 35%, #7652d8, #211b38 65%, #15131d);
+      font-size: 52px;
+    }
+    .tag { color: #bcaaff; font-size: 13px; font-weight: 700 }
+    .card h3 { margin: 8px 0 4px; font-size: 23px }
+    .card p, footer { color: #aaa6b8 }
+    button {
+      width: 100%; padding: 13px; border: 0; border-radius: 10px;
+      background: #514078; color: #ddd5f5; font: inherit; font-weight: 700;
+    }
+    button:disabled { cursor: not-allowed; opacity: .75 }
+    footer { padding: 40px 0 24px; font-size: 13px }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">LEGENDARY STUDIO</div>
+    <h1>Jogos para<br>levar com você.</h1>
+    <p class="intro">Conheça nossos jogos para Android. Baixe e jogue onde quiser.</p>
+  </header>
+
+  <main>
+    <h2>Jogos</h2>
+    <article class="card">
+      <div class="cover" aria-label="Arte provisória do jogo">🎮</div>
+      <p class="tag">ANDROID · EM BREVE</p>
+      <h3>Meu primeiro jogo</h3>
+      <p>Estamos preparando este jogo. O download estará disponível aqui em breve.</p>
+      <button disabled>APK ainda não disponível</button>
+    </article>
+  </main>
+
+  <footer>© 2025 Legendary Studio</footer>
+</body>
+</html>
