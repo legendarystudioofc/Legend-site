@@ -7,6 +7,11 @@
     <!-- Logozinha / Favicon -->
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <link rel="apple-touch-icon" href="logo.jpg">
+    
+    <!-- SDKs do Firebase (Firestore e App) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -167,11 +172,26 @@
             margin-bottom: 15px;
             border: 1px solid #1f293d;
         }
+        
         .detalhe-badges {
             display: flex;
             gap: 8px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
+        .badge-view-count {
+            background-color: #1f293d;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #374151;
+        }
+
         .detalhe-titulo {
             font-size: 22px;
             font-weight: 900;
@@ -204,15 +224,17 @@
             gap: 8px;
             transition: 0.2s;
         }
+        
+        /* Cores ativas para Like (Verde) e Dislike (Vermelho) */
         .action-btn.liked {
-            background-color: #064e3b;
-            border-color: #059669;
-            color: #34d399;
+            background-color: #064e3b !important;
+            border-color: #059669 !important;
+            color: #34d399 !important;
         }
         .action-btn.disliked {
-            background-color: #7f1d1d;
-            border-color: #dc2626;
-            color: #f87171;
+            background-color: #7f1d1d !important;
+            border-color: #dc2626 !important;
+            color: #f87171 !important;
         }
 
         .btn-baixar {
@@ -263,7 +285,7 @@
             color: #9ca3af;
         }
 
-        /* Comentários Independentes com Seleção de Avatares do GitHub */
+        /* Comentários na Nuvem com Avatares */
         .comentarios-box {
             margin-top: 25px;
         }
@@ -515,7 +537,7 @@
         <h2 id="detalhe-titulo" class="detalhe-titulo">TÍTULO DO JOGO</h2>
         <p id="detalhe-descricao" class="detalhe-sub">Descrição breve do port.</p>
 
-        <!-- Barra de Ações (Like, Dislike, Compartilhar) -->
+        <!-- Barra de Ações (Like, Dislike, Share) -->
         <div class="action-bar">
             <button id="btn-like" class="action-btn" onclick="darLike()">👍 <span id="count-likes">0</span></button>
             <button id="btn-dislike" class="action-btn" onclick="darDislike()">👎 <span id="count-dislikes">0</span></button>
@@ -541,7 +563,7 @@
             </div>
         </div>
 
-        <!-- Comentários com Persistência Local -->
+        <!-- Comentários Globais na Nuvem -->
         <div class="secao-bloco comentarios-box">
             <h4>COMENTÁRIOS DA COMUNIDADE</h4>
             
@@ -610,8 +632,21 @@
         </div>
     </footer>
 
-    <!-- Script de Gestão de Comentários, Likes (com localStorage) e Interações -->
+    <!-- Configuração com Blindagem contra cliques múltiplos -->
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyANIh7ne48D73Qo9yzEGoGe8oP9aa5uRMc",
+            authDomain: "site-c01a8.firebaseapp.com",
+            projectId: "site-c01a8",
+            storageBucket: "site-c01a8.firebasestorage.app",
+            messagingSenderId: "107386864561",
+            appId: "1:107386864561:web:1b62e7270845665810b390",
+            measurementId: "G-YJYZRVRQCZ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         const dadosJogos = {
             'poppy5': {
                 titulo: 'POPPY PLAYTIME CHAPTER 5 MOBILE',
@@ -619,7 +654,7 @@
                 imagem: 'Poppy5.jpeg',
                 descricao: 'Coisas quebradas. Explore os novos andares esquecidos da fábrica de brinquedos no mais recente port mobile.',
                 sobre: 'No capítulo mais recente de Poppy Playtime, você desce ainda mais fundo nas profundezas distorcidas da Playtime Co., sendo caçado por Huggy Wuggy e manipulado pelo sinistro mestre de marionetes conhecido como The Prototype. Sozinho e sem aliados, você precisa sobreviver aos perigos que espreitam nas sombras.',
-                badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-versao">V 0.0.1</span>',
+                badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-view-count">👁️ <span id="count-views">0</span></span><span class="badge-versao">V 0.0.1</span>',
                 linkDownload: '#'
             },
             'escape': {
@@ -634,30 +669,20 @@ Explore the dark depths of an abandoned toy factory and fight to stay alive agai
 Each run places you into a unique section of the facility: classrooms, warehouses, testing labs, and the dark corridors connecting them all. The denizens of the factory - fellow rejected Playtime Co. creations - stalk the decaying halls, hunting for prey.
 
 You and your friends must work together and utilize your surroundings if you hope to make it out of the factory in one piece.`,
-                badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-coop">CO-OP</span><span class="badge-versao">V 0.0.1</span>',
+                badgesHtml: '<span class="badge-genero">TERROR</span><span class="badge-coop">CO-OP</span><span class="badge-view-count">👁️ <span id="count-views">0</span></span><span class="badge-versao">V 0.0.1</span>',
                 linkDownload: '#'
             }
         };
 
         let jogoAtualID = null;
         let avatarSelecionado = 'avatar1.jpg';
+        let unsubComentarios = null;
+        let votandoEmAndamento = false; // Bloqueio antiflood
 
         function selecionarAvatar(elemento, caminhoImg) {
             document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
             elemento.classList.add('selecionado');
             avatarSelecionado = caminhoImg;
-        }
-
-        function obterDadosJogoSalvos() {
-            const salvos = localStorage.getItem('estatisticas_' + jogoAtualID);
-            if (salvos) {
-                return JSON.parse(salvos);
-            }
-            return { likes: 0, dislikes: 0, statusLike: null };
-        }
-
-        function salvarDadosJogo(stats) {
-            localStorage.setItem('estatisticas_' + jogoAtualID, JSON.stringify(stats));
         }
 
         function abrirJogo(id) {
@@ -672,19 +697,10 @@ You and your friends must work together and utilize your surroundings if you hop
             document.getElementById('detalhe-link-download').innerText = 'BAIXAR ' + jogo.versao;
             document.getElementById('detalhe-link-download').href = jogo.linkDownload;
 
-            const stats = obterDadosJogoSalvos();
-            document.getElementById('count-likes').innerText = stats.likes;
-            document.getElementById('count-dislikes').innerText = stats.dislikes;
-            
-            const btnLike = document.getElementById('btn-like');
-            const btnDislike = document.getElementById('btn-dislike');
-            btnLike.classList.remove('liked');
-            btnDislike.classList.remove('disliked');
-
-            if (stats.statusLike === 'like') btnLike.classList.add('liked');
-            if (stats.statusLike === 'dislike') btnDislike.classList.add('disliked');
-
-            atualizarListaComentarios();
+            registrarVisualizacao();
+            carregarEstatisticasNuvem();
+            atualizarVisualBotoesVoto();
+            escutarComentariosNuvem();
 
             document.getElementById('home-view').classList.remove('active');
             document.getElementById('detalhe-view').classList.add('active');
@@ -692,57 +708,146 @@ You and your friends must work together and utilize your surroundings if you hop
         }
 
         function irParaHome() {
+            if (unsubComentarios) {
+                unsubComentarios();
+            }
             document.getElementById('detalhe-view').classList.remove('active');
             document.getElementById('home-view').classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        function darLike() {
-            const stats = obterDadosJogoSalvos();
+        function registrarVisualizacao() {
+            const docRef = db.collection("estatisticas").doc(jogoAtualID);
+            db.runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    let views = 1;
+                    let likes = 0;
+                    let dislikes = 0;
+                    if (doc.exists) {
+                        views = (doc.data().views || 0) + 1;
+                        likes = doc.data().likes || 0;
+                        dislikes = doc.data().dislikes || 0;
+                    }
+                    transaction.set(docRef, { views: views, likes: likes, dislikes: dislikes }, { merge: true });
+                });
+            }).then(() => {
+                carregarEstatisticasNuvem();
+            }).catch(() => {});
+        }
+
+        function obterMeuVoto() {
+            return localStorage.getItem('voto_' + jogoAtualID) || null;
+        }
+
+        function salvarMeuVoto(voto) {
+            if (voto) {
+                localStorage.setItem('voto_' + jogoAtualID, voto);
+            } else {
+                localStorage.removeItem('voto_' + jogoAtualID);
+            }
+            atualizarVisualBotoesVoto();
+        }
+
+        function atualizarVisualBotoesVoto() {
+            const meuVoto = obterMeuVoto();
             const btnLike = document.getElementById('btn-like');
             const btnDislike = document.getElementById('btn-dislike');
 
-            if (stats.statusLike === 'like') {
-                stats.likes--;
-                stats.statusLike = null;
-                btnLike.classList.remove('liked');
-            } else {
-                if (stats.statusLike === 'dislike') {
-                    stats.dislikes--;
-                    btnDislike.classList.remove('disliked');
-                }
-                stats.likes++;
-                stats.statusLike = 'like';
-                btnLike.classList.add('liked');
-            }
+            btnLike.classList.remove('liked');
+            btnDislike.classList.remove('disliked');
 
-            salvarDadosJogo(stats);
-            document.getElementById('count-likes').innerText = stats.likes;
-            document.getElementById('count-dislikes').innerText = stats.dislikes;
+            if (meuVoto === 'like') {
+                btnLike.classList.add('liked');
+            } else if (meuVoto === 'dislike') {
+                btnDislike.classList.add('disliked');
+            }
+        }
+
+        function carregarEstatisticasNuvem() {
+            db.collection("estatisticas").doc(jogoAtualID).get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('count-views').innerText = (data.views || 0).toLocaleString();
+                    document.getElementById('count-likes').innerText = data.likes || 0;
+                    document.getElementById('count-dislikes').innerText = data.dislikes || 0;
+                } else {
+                    document.getElementById('count-views').innerText = 0;
+                    document.getElementById('count-likes').innerText = 0;
+                    document.getElementById('count-dislikes').innerText = 0;
+                }
+            }).catch(() => {});
+        }
+
+        function darLike() {
+            if (votandoEmAndamento) return; // Impede cliques múltiplos enquanto processa
+            votandoEmAndamento = true;
+
+            const docRef = db.collection("estatisticas").doc(jogoAtualID);
+            const meuVotoAtual = obterMeuVoto();
+
+            db.runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    let likes = doc.exists ? (doc.data().likes || 0) : 0;
+                    let dislikes = doc.exists ? (doc.data().dislikes || 0) : 0;
+                    let views = doc.exists ? (doc.data().views || 0) : 0;
+
+                    if (meuVotoAtual === 'like') {
+                        likes = Math.max(0, likes - 1);
+                        salvarMeuVoto(null);
+                    } else if (meuVotoAtual === 'dislike') {
+                        dislikes = Math.max(0, dislikes - 1);
+                        likes += 1;
+                        salvarMeuVoto('like');
+                    } else {
+                        likes += 1;
+                        salvarMeuVoto('like');
+                    }
+
+                    transaction.set(docRef, { likes: likes, dislikes: dislikes, views: views }, { merge: true });
+                });
+            }).then(() => {
+                carregarEstatisticasNuvem();
+                votandoEmAndamento = false;
+            }).catch(() => {
+                carregarEstatisticasNuvem();
+                votandoEmAndamento = false;
+            });
         }
 
         function darDislike() {
-            const stats = obterDadosJogoSalvos();
-            const btnLike = document.getElementById('btn-like');
-            const btnDislike = document.getElementById('btn-dislike');
+            if (votandoEmAndamento) return; // Impede cliques múltiplos enquanto processa
+            votandoEmAndamento = true;
 
-            if (stats.statusLike === 'dislike') {
-                stats.dislikes--;
-                stats.statusLike = null;
-                btnDislike.classList.remove('disliked');
-            } else {
-                if (stats.statusLike === 'like') {
-                    stats.likes--;
-                    btnLike.classList.remove('liked');
-                }
-                stats.dislikes++;
-                stats.statusLike = 'dislike';
-                btnDislike.classList.add('disliked');
-            }
+            const docRef = db.collection("estatisticas").doc(jogoAtualID);
+            const meuVotoAtual = obterMeuVoto();
 
-            salvarDadosJogo(stats);
-            document.getElementById('count-likes').innerText = stats.likes;
-            document.getElementById('count-dislikes').innerText = stats.dislikes;
+            db.runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    let likes = doc.exists ? (doc.data().likes || 0) : 0;
+                    let dislikes = doc.exists ? (doc.data().dislikes || 0) : 0;
+                    let views = doc.exists ? (doc.data().views || 0) : 0;
+
+                    if (meuVotoAtual === 'dislike') {
+                        dislikes = Math.max(0, dislikes - 1);
+                        salvarMeuVoto(null);
+                    } else if (meuVotoAtual === 'like') {
+                        likes = Math.max(0, likes - 1);
+                        dislikes += 1;
+                        salvarMeuVoto('dislike');
+                    } else {
+                        dislikes += 1;
+                        salvarMeuVoto('dislike');
+                    }
+
+                    transaction.set(docRef, { likes: likes, dislikes: dislikes, views: views }, { merge: true });
+                });
+            }).then(() => {
+                carregarEstatisticasNuvem();
+                votandoEmAndamento = false;
+            }).catch(() => {
+                carregarEstatisticasNuvem();
+                votandoEmAndamento = false;
+            });
         }
 
         function compartilharJogo() {
@@ -755,18 +860,6 @@ You and your friends must work together and utilize your surroundings if you hop
                 navigator.clipboard.writeText(window.location.href);
                 alert('Link copiado para a área de transferência!');
             }
-        }
-
-        function obterComentariosSalvos() {
-            const salvos = localStorage.getItem('comentarios_' + jogoAtualID);
-            if (salvos) {
-                return JSON.parse(salvos);
-            }
-            return [];
-        }
-
-        function salvarComentarios(comentarios) {
-            localStorage.setItem('comentarios_' + jogoAtualID, JSON.stringify(comentarios));
         }
 
         function adicionarComentario() {
@@ -785,40 +878,57 @@ You and your friends must work together and utilize your surroundings if you hop
                 return;
             }
 
-            const comentarios = obterComentariosSalvos();
-            comentarios.unshift({
+            db.collection("comentarios").add({
+                jogoId: jogoAtualID,
                 autor: apelido,
                 avatar: avatarSelecionado,
-                texto: texto
+                texto: texto,
+                timestamp: Date.now()
+            }).then(() => {
+                inputTexto.value = '';
+            }).catch((error) => {
+                alert("Erro ao publicar: " + error.message);
             });
-
-            salvarComentarios(comentarios);
-            inputTexto.value = '';
-            atualizarListaComentarios();
         }
 
-        function atualizarListaComentarios() {
+        function escutarComentariosNuvem() {
             const listaDiv = document.getElementById('lista-comentarios');
-            const comentarios = obterComentariosSalvos();
-
-            if (comentarios.length === 0) {
-                listaDiv.innerHTML = '<p style="color: #6b7280; font-size: 12px; text-align: center; padding: 10px;">No comments yet. Be the first to share your thoughts!</p>';
-                return;
+            
+            if (unsubComentarios) {
+                unsubComentarios();
             }
 
-            let html = '';
-            comentarios.forEach(c => {
-                html += `
-                    <div class="comentario-item">
-                        <img src="${c.avatar}" class="comentario-avatar" alt="Avatar">
-                        <div class="comentario-conteudo">
-                            <strong>${c.autor}</strong>
-                            <p>${c.texto}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            listaDiv.innerHTML = html;
+            unsubComentarios = db.collection("comentarios")
+                .where("jogoId", "==", jogoAtualID)
+                .onSnapshot((snapshot) => {
+                    if (snapshot.empty) {
+                        listaDiv.innerHTML = '<p style="color: #6b7280; font-size: 12px; text-align: center; padding: 10px;">Ainda sem comentários. Seja o primeiro a comentar!</p>';
+                        return;
+                    }
+
+                    let comentarios = [];
+                    snapshot.forEach((doc) => {
+                        comentarios.push(doc.data());
+                    });
+
+                    comentarios.sort((a, b) => b.timestamp - a.timestamp);
+
+                    let html = '';
+                    comentarios.forEach(c => {
+                        html += `
+                            <div class="comentario-item">
+                                <img src="${c.avatar}" class="comentario-avatar" alt="Avatar">
+                                <div class="comentario-conteudo">
+                                    <strong>${c.autor}</strong>
+                                    <p>${c.texto}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listaDiv.innerHTML = html;
+                }, (error) => {
+                    listaDiv.innerHTML = '<p style="color: #f87171; font-size: 12px; text-align: center; padding: 10px;">Erro ao carregar comentários.</p>';
+                });
         }
     </script>
 </body>
